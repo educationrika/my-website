@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中学理科 教材アーカイブ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 全体の設定 --- */
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* 背景：深いグレー */
+            color: #e0e0e0; /* 文字：薄いグレー */
+            line-height: 1.6;
+        }
+
+        /* --- ヘッダー --- */
+        header {
+            background: linear-gradient(135deg, #1a237e, #0d47a1); /* 理科っぽい青のグラデーション */
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+        p.subtitle {
+            margin-top: 10px;
+            color: #bbdefb;
+            font-size: 1rem;
+        }
+
+        /* --- メインコンテンツ --- */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 学年ごとのセクション */
+        .grade-section {
+            margin-bottom: 60px;
+        }
+        .grade-title {
+            font-size: 1.5rem;
+            border-left: 6px solid #42a5f5; /* 左側の青い線 */
+            padding-left: 15px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        /* 2年生、3年生で線の色を変える */
+        .grade-2 .grade-title { border-color: #66bb6a; } /* 緑 */
+        .grade-3 .grade-title { border-color: #ff7043; } /* オレンジ */
+
+        /* --- カードグリッド（教材一覧） --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 画面幅に合わせて自動調整 */
+            gap: 20px;
+        }
+
+        /* 個別のカードデザイン */
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px); /* ホバー時に少し浮く */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            border-color: #555;
+        }
+        
+        /* カードの中身 */
+        .tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .tag.biology { background-color: #2e7d32; color: #fff; } /* 生物：緑 */
+        .tag.physics { background-color: #1565c0; color: #fff; } /* 物理：青 */
+        .tag.chemistry { background-color: #c62828; color: #fff; } /* 化学：赤 */
+        .tag.earth { background-color: #f57f17; color: #fff; } /* 地学：黄 */
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .card p {
+            font-size: 0.9rem;
+            color: #bbb;
+            flex-grow: 1; /* ボタンを下揃えにする */
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #555;
+        }
+
+        /* --- フッター --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>中学理科 教材アーカイブ</h1>
+        <p class="subtitle">授業や復習に使えるWeb教材置き場</p>
+    </header>
+
+    <div class="container">
+
+        <section class="grade-section grade-3">
+            <h2 class="grade-title">中学3年生</h2>
+            <div class="card-grid">
+                
+                <div class="card">
+                    <div><span class="tag earth">地学</span></div>
+                    <h3>天体シミュレーション</h3>
+                    <p>地球の公転・自転と、季節ごとの星座の見え方を確認できるインタラクティブ教材です。</p>
+                    <a href="astro.html" class="btn">開く</a>
+                </div>
+
+                <div class="card">
+                    <div><span class="tag physics">物理</span></div>
+                    <h3>運動とエネルギー（準備中）</h3>
+                    <p>台車の運動記録タイマーを使った実験データのグラフ化ツールです。</p>
+                    <a href="#" class="btn" style="opacity: 0.5; pointer-events: none;">準備中</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="grade-section grade-2">
+            <h2 class="grade-title">中学2年生</h2>
+            <div class="card-grid">
+                
+                <div class="card">
+                    <div><span class="tag chemistry">化学</span></div>
+                    <h3>化学反応式クイズ</h3>
+                    <p>酸化・還元や化合の化学反応式を練習するドリルです。</p>
+                    <a href="#" class="btn" style="opacity: 0.5; pointer-events: none;">準備中</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="grade-section grade-1">
+            <h2 class="grade-title">中学1年生</h2>
+            <div class="card-grid">
+
+                <div class="card">
+                    <div><span class="tag biology">生物</span></div>
+                    <h3>植物の分類マップ</h3>
+                    <p>被子植物・裸子植物の分類を画像付きで解説します。</p>
+                    <a href="#" class="btn" style="opacity: 0.5; pointer-events: none;">準備中</a>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        &copy; 2024 Science Materials Repository
+    </footer>
+
+</body>
+</html>
