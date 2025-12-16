@@ -102,6 +102,122 @@
             background: #222;
         }
 
+        /* メニューに戻るボタン */
+        .menu-btn {
+            text-decoration: none;
+            color: #fff;
+            background-color: #444;
+            /* ちょっと明るめのグレー */
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border: 1px solid #666;
+            margin-right: 15px;
+            /* タイトルとの間隔 */
+            display: inline-flex;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background-color: #555;
+        }
+
+        .menu-btn::before {
+            content: "◀";
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* 観測者視点 (右下) */
+        #human-view-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        #human-view-container h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #aaa;
+            text-align: center;
+            font-weight: normal;
+        }
+
+        .sky-windows {
+            display: flex;
+            gap: 5px;
+        }
+
+        .sky-panel {
+            flex: 1;
+            height: 80px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 3px #000;
+        }
+
+        .direction-tag {
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            right: 0;
+            font-size: 10px;
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 0;
+            font-weight: normal;
+        }
+
+        /* 空の色クラス */
+        .sky-day {
+            background: #4fc3f7;
+            color: #333;
+            text-shadow: none;
+        }
+
+        /* 昼の青空 */
+        .sky-night {
+            background: #000022;
+        }
+
+        /* 真っ暗な夜空 */
+        .sky-evening-sky {
+            background: linear-gradient(to bottom, #1a237e, #b71c1c);
+        }
+
+        /* 夕方の空 */
+        .sky-morning-sky {
+            background: linear-gradient(to bottom, #1a237e, #fbc02d);
+        }
+
+        /* 明け方の空 */
+        .sky-sunset {
+            background: linear-gradient(to bottom, #f57c00, #b71c1c);
+        }
+
+        /* 夕焼け（太陽方向） */
+        .sky-sunrise {
+            background: linear-gradient(to bottom, #4fc3f7, #fbc02d);
+        }
+
+        /* 朝焼け（太陽方向） */
         .selection-buttons button {
             display: block;
             width: 100%;
@@ -302,6 +418,7 @@
                 </g>
             </svg>
 
+
             <div id="mini-view-container">
                 <h3>斜めからの視点</h3>
                 <svg id="miniSvg" viewBox="0 0 300 200">
@@ -327,6 +444,24 @@
                         </g>
                     </g>
                 </svg>
+            </div>
+
+            <div id="human-view-container">
+                <h3>観測者から見た空</h3>
+                <div class="sky-windows">
+                    <div class="sky-panel" id="view-east">
+                        <span id="star-east"></span>
+                        <div class="direction-tag">東</div>
+                    </div>
+                    <div class="sky-panel" id="view-south">
+                        <span id="star-south"></span>
+                        <div class="direction-tag">南</div>
+                    </div>
+                    <div class="sky-panel" id="view-west">
+                        <span id="star-west"></span>
+                        <div class="direction-tag">西</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -360,6 +495,17 @@
             'midnight': { offset: -180, label: '真夜中' },
             'morning': { offset: -270, label: '明け方' }
         };
+
+        // 星座の設定 (0:冬, 1:春, 2:夏, 3:秋)
+        const constellations = ['オリオン座', 'しし座', 'さそり座', 'ペガスス座'];
+        // 季節のインデックス
+        const seasonIndices = { 'winter': 0, 'spring': 1, 'summer': 2, 'autumn': 3 };
+        // 時間のオフセット（南中する星座のズレ）
+        // 真夜中(0) -> その季節の星座が南中
+        // 明け方(+1) -> +1つ先の季節の星座が南中
+        // 夕方(-1 -> +3) -> 1つ前の季節の星座が南中
+        // 昼(+2) -> 2つ先の季節（太陽の方向）
+        const timeIndices = { 'midnight': 0, 'morning': 1, 'noon': 2, 'evening': 3 };
 
         function update() {
             const seasonData = seasonConfig[currentSeason];
@@ -406,6 +552,64 @@
             document.getElementById('info-text').innerHTML =
                 `<span class="highlight">${seasonData.label}</span>の<span class="highlight">${timeData.label}</span>の空を見ています。<br>` +
                 getTimeDescription(timeData.label);
+
+            updateHumanView();
+        }
+
+        function updateHumanView() {
+            // 基本の色クラスをリセット
+            const viewEast = document.getElementById('view-east');
+            const viewSouth = document.getElementById('view-south');
+            const viewWest = document.getElementById('view-west');
+            [viewEast, viewSouth, viewWest].forEach(el => el.className = 'sky-panel');
+
+            // --- 1. 空の色設定 ---
+            // 明け方: 東は朝焼け、他は薄暗い
+            // 夕方: 西は夕焼け、他は薄暗い
+            // 昼: 全部青
+            // 夜: 全部黒
+            if (currentTime === 'noon') {
+                [viewEast, viewSouth, viewWest].forEach(el => el.classList.add('sky-day'));
+            } else if (currentTime === 'midnight') {
+                [viewEast, viewSouth, viewWest].forEach(el => el.classList.add('sky-night'));
+            } else if (currentTime === 'morning') {
+                viewEast.classList.add('sky-sunrise');
+                viewSouth.classList.add('sky-morning-sky');
+                viewWest.classList.add('sky-morning-sky');
+            } else if (currentTime === 'evening') {
+                viewWest.classList.add('sky-sunset');
+                viewSouth.classList.add('sky-evening-sky');
+                viewEast.classList.add('sky-evening-sky');
+            }
+
+            // --- 2. 星座の表示 ---
+            // 南に見える星座の計算
+            const sIdx = seasonIndices[currentSeason];
+            const tIdx = timeIndices[currentTime];
+
+            // South Index = (Season + Time) % 4
+            const southStarIdx = (sIdx + tIdx) % 4;
+            const eastStarIdx = (southStarIdx + 1) % 4;
+            const westStarIdx = (southStarIdx - 1 + 4) % 4;
+
+            let southText = constellations[southStarIdx];
+            let eastText = constellations[eastStarIdx];
+            let westText = constellations[westStarIdx];
+
+            // 太陽の影響による不可視判定
+            if (currentTime === 'noon') {
+                southText = ''; eastText = ''; westText = '';
+            }
+            if (currentTime === 'morning') {
+                eastText = ''; // 太陽
+            }
+            if (currentTime === 'evening') {
+                westText = ''; // 太陽
+            }
+
+            document.getElementById('star-south').textContent = southText;
+            document.getElementById('star-east').textContent = eastText;
+            document.getElementById('star-west').textContent = westText;
         }
 
         function changeSeason(direction) {
